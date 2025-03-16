@@ -1,3 +1,9 @@
+# DataFusion-GDM
+
+- Purpose: Machine Learning Solutions for Integrating Partially Overlapped Genetic Datasets
+- Version: V1.0.0
+- Author: Zhu, Jiashuai (The University of Melbourne; Agriculture Victoria Research)
+
 ## Genetic Distance Simulation (`00-Simulate_structured_distM`)
 
 Creates a realistic genetic distance matrix (GDM) with assumed population structure:
@@ -21,7 +27,7 @@ A pipeline for aligning and comparing distance matrices through dimensional redu
 
 ### Execution
 
-1. Ensure a complete genetic distance matrix (`GDM_simulated.csv`), if use controlled population structure, `input` 
+1. Ensure a complete genetic distance matrix (`GDM_simulated.csv`), if using controlled population structures, `input` 
 2. Run `03_procrustes_sensitivity.r`
 	- `03_procrustes_sensitivity.r` will call `01_prepare_data_xxx.r` and `02_perform_mds+procrustes.r`
 3. Run `04_visualization.r` to present results
