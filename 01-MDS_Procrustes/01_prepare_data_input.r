@@ -102,6 +102,4 @@ if (FALSE) {
   heatmap(matrices[["B"]])
   print(matrices[["np"]])
   print(matrices[["k"]])
-  
-
 }
