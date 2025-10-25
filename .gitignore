@@ -1,0 +1,46 @@
+# R session files
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+
+# R projects and build
+*.Rproj
+.Rbuildignore
+packrat/
+renv/
+renv.lock
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Generated artifacts and outputs
+**/data/**
+!01-MDS_Procrustes/GDM_simulated.csv
+!02-BESMI/data/GDM_simulated.csv
+**/figures/**
+**/plots/**
+**/outputs/**
+**/results/**
+**/logs/**
+**/checkpoints/**
+
+# R data files
+*.rds
+*.RDS
+*.RData
+
+# CSVs (except docs)
+*.csv
+!README.csv
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.tiff
+
+# Temp
+*.bak
+*.tmp
