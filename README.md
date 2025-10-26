@@ -2,6 +2,15 @@
 
 Machine Learning Solutions for Integrating Partially Overlapped Genetic Datasets.
 
+## How to cite
+
+If you use DataFusion-GDM, please cite:
+
+- Paper: Zhu J., Malmberg M.M., Shinozuka M., Retegan R.M., Cogan N.O., Jacobs J.L., Giri K., Smith K.F. (2025). Machine learning solutions for integrating partially overlapping genetic datasets and modelling host–endophyte effects in ryegrass (Lolium) dry matter yield estimation. Frontiers in Plant Science. https://doi.org/10.3389/fpls.2025.1543956
+- Software: Zhu, J. (2025). DataFusion-GDM. The University of Melbourne. Software. https://doi.org/10.26188/28602953
+
+Author ORCID: https://orcid.org/0000-0002-9916-9732
+
 ## Install
 
 In R:
