@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+title: DataFusion-GDM
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - given-names: Jiashuai
+    family-names: Zhu
+    orcid: https://orcid.org/0000-0002-9916-9732
+identifiers:
+  - type: doi
+    value: 10.26188/28602953
+repository-code: https://github.com/jiashuaiz/DataFusion-GDM
+license: GPL-3.0-only
+preferred-citation:
+  type: article
+  title: "Machine learning solutions for integrating partially overlapping genetic datasets and modelling host–endophyte effects in ryegrass (Lolium) dry matter yield estimation"
+  authors:
+    - given-names: Jiashuai
+      family-names: Zhu
+    - given-names: M. Michelle
+      family-names: Malmberg
+    - given-names: Maiko
+      family-names: Shinozuka
+    - given-names: Renata M.
+      family-names: Retegan
+    - given-names: Noel O.
+      family-names: Cogan
+    - given-names: Joe L.
+      family-names: Jacobs
+    - given-names: Khageswor
+      family-names: Giri
+    - given-names: Kevin F.
+      family-names: Smith
+  year: 2025
+  journal: Frontiers in Plant Science
+  volume: "16"
+  doi: 10.3389/fpls.2025.1543956
+  url: https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2025.1543956
+references:
+  - type: software
+    title: DataFusion-GDM
+    authors:
+      - given-names: Jiashuai
+        family-names: Zhu
+        orcid: https://orcid.org/0000-0002-9916-9732
+    year: 2025
+    institution: The University of Melbourne
+    doi: 10.26188/28602953
+    url: https://doi.org/10.26188/28602953
+

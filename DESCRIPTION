@@ -1,0 +1,28 @@
+Package: DataFusionGDM
+Type: Package
+Title: Machine Learning for Integrating Partially Overlapped Genetic Datasets
+Version: 1.1.0
+Authors@R: c(
+    person(given = "Jiashuai", family = "Zhu", role = c("aut", "cre"), email = "jiashuai.zhu@student.unimelb.edu.au", comment = c(ORCID = "0000-0002-9916-9732")),
+    person(given = "Agriculture Victoria Research", role = c("cph"))
+)
+Description: Tools to simulate genetic distance matrices, align and compare them via MDS and Procrustes, and evaluate imputation with the BESMI framework.
+License: GPL-3 | file LICENSE
+URL: https://github.com/jiashuaiz/DataFusion-GDM
+BugReports: https://github.com/jiashuaiz/DataFusion-GDM/issues
+Encoding: UTF-8
+Depends: R (>= 3.6)
+Imports:
+    ggplot2,
+    vegan,
+    mice,
+    stats,
+    utils
+Suggests:
+    VIM,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+NeedsCompilation: no

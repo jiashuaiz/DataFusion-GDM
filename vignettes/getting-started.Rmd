@@ -1,0 +1,73 @@
+---
+title: "DataFusionGDM: Getting Started"
+author: "DataFusionGDM Team"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DataFusionGDM: Getting Started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+# Overview
+
+`DataFusionGDM` provides tools to simulate genetic distance matrices (GDM),
+compare/alignment of distance spaces via MDS and Procrustes, and evaluate
+imputation under structured missingness (BESMI).
+
+# Installation
+
+```r
+# install.packages("DataFusionGDM") # from source or repository
+```
+
+# Simulation and visualization
+
+```{r}
+library(DataFusionGDM)
+res <- run_genetic_scenario("default", n_pops = 30)
+# Display MDS plot (heatmap requires ComplexHeatmap, not shown here)
+res$plots$mds()
+```
+
+# MDS + Procrustes
+
+```{r}
+# create two related matrices from the simulated GDM
+G <- res$results$distance_matrix
+A <- G + matrix(rnorm(length(G), 0, 0.02), nrow = nrow(G)); diag(A) <- 0
+B <- G + matrix(rnorm(length(G), 0.03, 0.02), nrow = nrow(G)); diag(B) <- 0
+
+mds <- perform_mds(A, B)
+Yt <- apply_procrustes(mds$X, mds$Y, mds$Y)
+B_cal <- coords_to_distances(Yt)
+mean((A - B)^2)
+mean((A - B_cal)^2)
+```
+
+# BESMI (single dataset)
+
+```{r}
+# Prepare a masked dataset in-memory
+set.seed(1)
+mask <- matrix(FALSE, nrow = nrow(G), ncol = ncol(G))
+sel <- sample(seq_len(nrow(G)), 5)
+mask[sel, sel] <- TRUE
+M_input <- G; M_input[mask] <- NA
+
+# Impute
+impt <- besmi_iterative_imputation(M_input, M_mask = mask, M_real = G, max_iterations = 3)
+str(impt$metrics)
+```
+
+# Reproducible pipelines
+
+See `inst/examples` for fuller pipelines that write results to disk in a project context.

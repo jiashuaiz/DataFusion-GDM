@@ -17,6 +17,7 @@ Thumbs.db
 
 # Generated artifacts and outputs
 **/data/**
+!inst/extdata/**
 !01-MDS_Procrustes/GDM_simulated.csv
 !02-BESMI/data/GDM_simulated.csv
 **/figures/**
@@ -34,6 +35,7 @@ Thumbs.db
 # CSVs (except docs)
 *.csv
 !README.csv
+!inst/extdata/*.csv
 
 # Images
 *.png
