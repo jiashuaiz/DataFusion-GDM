@@ -30,35 +30,28 @@ install.packages(".", repos = NULL, type = "source")
 ```r
 library(DataFusionGDM)
 
-# Simulate a GDM and save to CSV
-export_simulated_gdm("GDM_simulated.csv", scenario = "default", n_pops = 40)
-
-# Run a scenario and get plots
+# Simulate a GDM in memory and visualize
 res <- run_genetic_scenario("island", n_pops = 40)
 res$plots$heatmap()
 res$plots$mds()
+
+# Optionally export to CSV if needed
+# export_simulated_gdm("GDM_simulated.csv", scenario = "default", n_pops = 40)
 ```
 
-## Examples
+## Vignettes
 
-Reproducible analysis pipelines are provided under `inst/examples`:
-- `00_simulate_structured_gdm.R` — structured simulation + plots
-- `01_mds_procrustes_calibration.R` — MDS + Procrustes calibration
-- `02_besmi_end_to_end.R` — BESMI end-to-end example
-
-To run after installation:
-
-```r
-example_file <- system.file("examples", "01_mds_procrustes_sensitivity.R", package = "DataFusionGDM")
-source(example_file)
-```
+See the package vignettes for end-to-end guides:
+- Getting started
+- MDS + Procrustes sensitivity
+- BESMI batch imputation
 
 ## Contents
 
 - Simulation and visualization APIs in `R/simulate_gdm.R`
 - MDS & Procrustes APIs in `R/mds_procrustes.R`
 - BESMI preparation and imputation APIs in `R/besmi*.R`
-- Example data in `inst/extdata/GDM_simulated.csv`
+ - Vignettes under `vignettes/` (no bundled data; examples use in-memory/temp files)
 
 ## License
 
