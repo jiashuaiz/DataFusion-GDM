@@ -104,7 +104,7 @@ besmi_impute_single_dataset <- function(input_path, method = "lasso.norm",
   if (!is.null(imputation_result$metrics) && nrow(imputation_result$metrics) > 0) {
     metrics_df <- imputation_result$metrics
     result_metrics <- empty_metrics[0, ]
-    for (i in 1:nrow(metrics_df)) {
+    for (i in seq_len(nrow(metrics_df))) {
       row <- metrics_df[i, ]; new_row <- empty_metrics[1, ]
       for (col in names(metrics_df)) if (col %in% names(new_row)) new_row[[col]] <- row[[col]]
       result_metrics <- rbind(result_metrics, new_row)

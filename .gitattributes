@@ -1,0 +1,21 @@
+* text=auto eol=lf
+
+# R and docs
+*.R text eol=lf
+*.r text eol=lf
+*.Rmd text eol=lf
+*.Rd text eol=lf
+*.md text eol=lf
+*.csv text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.ps1 text eol=lf
+
+# Binary
+*.rds -text
+*.png -text
+*.jpg -text
+*.jpeg -text
+*.gif -text
+*.pdf -text
