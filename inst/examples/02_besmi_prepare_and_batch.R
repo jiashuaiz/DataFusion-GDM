@@ -1,4 +1,4 @@
-# Example: BESMI prepare datasets and batch imputation
+## Example: BESMI prepare datasets and batch imputation (with quick visualization)
 
 library(DataFusionGDM)
 library(tidyverse)
@@ -35,6 +35,7 @@ for (k in k_values) {
     ))
   }
 }
+dir.create("data/summary_tables", recursive = TRUE, showWarnings = FALSE)
 write.csv(summary_table, "data/summary_tables/summary_table_datasets.csv", row.names = FALSE)
 
 # Batch process imputation (example method)
@@ -46,3 +47,14 @@ metrics <- besmi_batch_impute(dataset_paths = dataset_paths, the_method = "midas
                               output_dir = "data/imputation_set")
 
 write.csv(metrics, "data/metrics_df_midastouch.csv", row.names = FALSE)
+
+# Quick visualization: imputation distance by iteration
+if (nrow(metrics) > 0) {
+  library(ggplot2)
+  gg <- ggplot(metrics, aes(x = iteration, y = imputation_dis, group = interaction(k, bs))) +
+    geom_line(alpha = 0.3) +
+    geom_smooth(se = FALSE, color = "blue") +
+    labs(title = "Imputation distance by iteration", x = "Iteration", y = "Distance") +
+    theme_minimal()
+  print(gg)
+}

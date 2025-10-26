@@ -1,4 +1,4 @@
-# Example: MDS + Procrustes sensitivity using package APIs
+## Example: MDS + Procrustes sensitivity using package APIs (adds quick plot)
 
 library(DataFusionGDM)
 library(ggplot2)

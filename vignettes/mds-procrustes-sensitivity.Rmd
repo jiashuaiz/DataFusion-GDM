@@ -1,0 +1,87 @@
+---
+title: "MDS + Procrustes Sensitivity"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MDS + Procrustes Sensitivity}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```r
+library(DataFusionGDM)
+library(ggplot2)
+library(vegan)
+set.seed(42)
+
+pkg_file <- system.file("extdata", "GDM_simulated.csv", package = "DataFusionGDM")
+if (nzchar(pkg_file)) {
+  input_file <- pkg_file
+} else {
+  if (!file.exists("data/GDM_simulated.csv")) {
+    dir.create("data", showWarnings = FALSE)
+    export_simulated_gdm("data/GDM_simulated.csv", scenario = "default", n_pops = 40)
+  }
+  input_file <- "data/GDM_simulated.csv"
+}
+
+k_values <- c(4, 8, 12)
+num_tests <- 3
+seed_base <- 42
+
+prepare_matrices_from_csv <- function(input_file, k, bias_mu = 0.1, noise_sd = 0.05, randomize_shared = TRUE, seed = 42) {
+  full_matrix <- as.matrix(read.csv(input_file, header = TRUE, row.names = 1))
+  all_pop_names <- rownames(full_matrix)
+  np <- length(all_pop_names)
+  stopifnot(k >= 1, k <= np)
+  set.seed(seed)
+  shared_pop_names <- if (randomize_shared) sample(all_pop_names, k) else all_pop_names[1:k]
+  unique_pop_names <- setdiff(all_pop_names, shared_pop_names)
+  A <- full_matrix; B <- full_matrix
+  A <- abs(A + matrix(rnorm(length(A), 0, noise_sd), nrow(A)))
+  B <- abs(B + matrix(rnorm(length(B), bias_mu, noise_sd), nrow(B)))
+  diag(A) <- 0; diag(B) <- 0
+  label_A <- label_B <- rep("", np); names(label_A) <- names(label_B) <- all_pop_names
+  label_A[shared_pop_names] <- paste0("S_", shared_pop_names)
+  label_B[shared_pop_names] <- paste0("S_", shared_pop_names)
+  label_A[unique_pop_names] <- paste0("A_", unique_pop_names)
+  label_B[unique_pop_names] <- paste0("B_", unique_pop_names)
+  rownames(A) <- label_A[rownames(A)]; colnames(A) <- label_A[colnames(A)]
+  rownames(B) <- label_B[rownames(B)]; colnames(B) <- label_B[colnames(B)]
+  list(A = A, B = B, np = np, k = k)
+}
+
+results <- data.frame()
+for (k in k_values) {
+  for (test_id in seq_len(num_tests)) {
+    test_seed <- seed_base + test_id * 100 + k
+    matrices <- prepare_matrices_from_csv(input_file, k = k, seed = test_seed)
+    A <- matrices$A; B <- matrices$B
+    mds <- perform_mds(A, B)
+    X <- mds$X; Y <- mds$Y; d_opt <- mds$d_opt
+    pop_common <- intersect(rownames(A), rownames(B))
+    X_sub <- X[pop_common, 1:d_opt]
+    Y_sub <- Y[pop_common, 1:d_opt]
+    Yt <- apply_procrustes(X_sub, Y_sub, Y)
+    B_cal <- coords_to_distances(Yt)
+    the_prior <- mean((A - B)^2)
+    the_post  <- mean((A - B_cal)^2)
+    improvement <- (the_prior - the_post) / the_prior * 100
+    results <- rbind(results, data.frame(k = k, test_id = test_id, the_prior = the_prior,
+                                         the_post = the_post, improvement = improvement))
+  }
+}
+
+agg <- aggregate(cbind(the_prior, the_post, improvement) ~ k, data = results,
+                 FUN = function(x) c(mean = mean(x), sd = sd(x)))
+agg <- do.call(data.frame, agg)
+
+p <- ggplot(agg, aes(x = k)) +
+  geom_line(aes(y = improvement.mean), color = "blue") +
+  geom_point(aes(y = improvement.mean), color = "blue") +
+  geom_ribbon(aes(ymin = improvement.mean - improvement.sd,
+                  ymax = improvement.mean + improvement.sd), fill = "blue", alpha = 0.2) +
+  labs(title = "Calibration improvement vs shared k",
+       x = "Shared populations (k)", y = "% Improvement") +
+  theme_minimal()
+print(p)
+```

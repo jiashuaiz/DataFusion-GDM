@@ -1,0 +1,36 @@
+---
+title: "BESMI Batch Imputation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{BESMI Batch Imputation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```r
+library(DataFusionGDM)
+set.seed(233)
+
+if (!file.exists("data/GDM_simulated.csv")) {
+  dir.create("data", showWarnings = FALSE)
+  export_simulated_gdm("data/GDM_simulated.csv", scenario = "default", n_pops = 40)
+}
+full <- besmi_prepare_full_dataset("data/GDM_simulated.csv")
+
+summary_table <- data.frame()
+for (k in 1:3) {
+  for (bs_i in 1:3) {
+    res <- besmi_create_masked_matrices(full, k, seed = 100 + 10 * k + bs_i)
+    dir.create("data/training_set", recursive = TRUE, showWarnings = FALSE)
+    training_path <- sprintf("data/training_set/masked_k%d_bs%d.rds", k, bs_i)
+    saveRDS(res$masked_matrix, training_path)
+    summary_table <- rbind(summary_table, data.frame(k = k, bs = bs_i, training_path = training_path))
+  }
+}
+
+paths <- summary_table$training_path
+metrics <- besmi_batch_impute(paths, the_method = "midastouch", max_iter = 3,
+  imputation_convergence_threshold = 1e-3, propagation_convergence_threshold = 1e-3,
+  distance_metric = "mae", output_dir = "data/imputation_set")
+head(metrics)
+```

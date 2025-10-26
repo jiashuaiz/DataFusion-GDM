@@ -37,7 +37,7 @@ besmi_create_masked_matrices <- function(full_matrix, k, seed = NULL) {
   if (!is.null(seed)) set.seed(seed)
   pop_names <- rownames(full_matrix)
   n_pops <- length(pop_names)
-  group_u_indices <- sample(1:n_pops, k)
+  group_u_indices <- sample(seq_len(n_pops), k)
   group_u <- pop_names[group_u_indices]
   group_s <- pop_names[-group_u_indices]
   masked_matrix <- full_matrix
@@ -163,7 +163,7 @@ besmi_knn_impute <- function(M_input, M_mask, M_real = NULL, distance_metric = "
   initialized_matrix <- .besmi_initialize_M(M_input)
   tails_chain[[1]] <- initialized_matrix
   max_k <- min(num_cols, sum(rowSums(is.na(input_df)) == 0)); if (max_k < 1) max_k <- 1
-  for (curr_k in 1:max_k) {
+  for (curr_k in seq_len(max_k)) {
     imputed_df <- tryCatch({ VIM::kNN(input_df, k = curr_k, imp_var = FALSE) }, error = function(e) NULL)
     if (is.null(imputed_df)) next
     imputed_matrix <- as.matrix(imputed_df)
@@ -183,5 +183,14 @@ besmi_knn_impute <- function(M_input, M_mask, M_real = NULL, distance_metric = "
                           converged = NA, averaged = FALSE, stringsAsFactors = FALSE)
     all_metrics <- rbind(all_metrics, new_row)
   }
-  list(final_matrix = best_matrix, metrics = all_metrics, tails_chain = tails_chain)
+  if (is.null(M_real)) {
+    best_score <- NA_real_
+  }
+  list(
+    final_matrix = best_matrix,
+    metrics = all_metrics,
+    tails_chain = tails_chain,
+    best_k = best_k,
+    best_score = best_score
+  )
 }

@@ -15,7 +15,7 @@ create_population_metadata <- function(
   group_probs <- stats::rbeta(n_major_groups, 2, 2)
   group_probs <- group_probs / sum(group_probs)
   pop_groups <- sample(1:n_major_groups, n_pops, replace = TRUE, prob = group_probs)
-  pop_labels <- paste0("Pop", sprintf("%02d", 1:n_pops))
+  pop_labels <- paste0("Pop", sprintf("%02d", seq_len(n_pops)))
   pop_info <- data.frame(
     Population = pop_labels,
     MajorGroup = paste0("Group", pop_groups)
@@ -23,7 +23,7 @@ create_population_metadata <- function(
   if (use_subgroups) {
     subgroup_assignment <- rep(0, n_pops)
     subgroups_per_group <- ceiling(n_subgroups / n_major_groups)
-    for (g in 1:n_major_groups) {
+    for (g in seq_len(n_major_groups)) {
       group_pops <- which(pop_groups == g)
       if (length(group_pops) > 0) {
         start_subgroup <- (g-1) * subgroups_per_group + 1
@@ -45,7 +45,7 @@ create_population_metadata <- function(
     }
     pop_info$Subgroup <- paste0("Subgroup", subgroup_assignment)
   } else {
-    pop_info$Subgroup <- paste0("Subgroup", 1:n_pops)
+    pop_info$Subgroup <- paste0("Subgroup", seq_len(n_pops))
   }
   return(pop_info)
 }
@@ -58,7 +58,7 @@ generate_group_centroids <- function(
     use_genetic_dims = TRUE
 ) {
   group_centroids <- matrix(0, nrow = n_major_groups, ncol = n_dims)
-  for (g in 1:n_major_groups) {
+  for (g in seq_len(n_major_groups)) {
     if (geo_dims > 0) {
       if (g <= geo_dims + 1) {
         angle <- 2 * pi * (g-1) / (geo_dims + 1)
@@ -88,7 +88,7 @@ generate_subgroup_centroids <- function(
   }
   subgroup_centroids <- matrix(0, nrow = n_subgroups, ncol = n_dims)
   subgroups_per_group <- ceiling(n_subgroups / n_major_groups)
-  for (s in 1:n_subgroups) {
+  for (s in seq_len(n_subgroups)) {
     parent_group <- ceiling(s / subgroups_per_group)
     if (parent_group > n_major_groups) parent_group <- n_major_groups
     subgroup_centroids[s,] <- group_centroids[parent_group,] + 
@@ -105,7 +105,7 @@ position_populations <- function(
     pop_dispersion = 0.5
 ) {
   pop_positions <- matrix(0, nrow = n_pops, ncol = n_dims)
-  for (i in 1:n_pops) {
+  for (i in seq_len(n_pops)) {
     sg_str <- pop_info$Subgroup[i]
     sg <- as.numeric(gsub("Subgroup", "", sg_str))
     if (sg > nrow(subgroup_centroids) || sg < 1) {
@@ -132,14 +132,14 @@ create_admixed_populations <- function(
   }
   n_admixed <- round(n_pops * admixture_prob)
   if (n_admixed > 0 && nrow(subgroup_centroids) > 1) {
-    admixed_pops <- sample(1:n_pops, n_admixed)
+    admixed_pops <- sample(seq_len(n_pops), n_admixed)
     for (i in admixed_pops) {
       sg_str <- pop_info$Subgroup[i]
       sg1 <- as.numeric(gsub("Subgroup", "", sg_str))
       if (sg1 > nrow(subgroup_centroids) || sg1 < 1) {
         sg1 <- 1
       }
-      all_sgs <- 1:nrow(subgroup_centroids)
+      all_sgs <- seq_len(nrow(subgroup_centroids))
       if (length(all_sgs) > 1) {
         sg2 <- sample(all_sgs[all_sgs != sg1], 1)
         admix_ratio <- stats::runif(1, 0.3, 0.7)
@@ -171,9 +171,9 @@ create_bottlenecked_populations <- function(
   n_bottleneck <- round(n_pops * bottleneck_prob)
   if (n_bottleneck > 0) {
     admixed_pops <- which(pop_info$Admixed == "Yes")
-    candidate_pops <- setdiff(1:n_pops, admixed_pops)
+    candidate_pops <- setdiff(seq_len(n_pops), admixed_pops)
     if (length(candidate_pops) < n_bottleneck) {
-      candidate_pops <- 1:n_pops
+      candidate_pops <- seq_len(n_pops)
     }
     bottleneck_pops <- sample(candidate_pops, min(n_bottleneck, length(candidate_pops)))
     for (i in bottleneck_pops) {
@@ -202,7 +202,7 @@ calculate_raw_distances <- function(
     use_isolation_by_distance = TRUE
 ) {
   dist_matrix <- matrix(0, nrow = n_pops, ncol = n_pops)
-  for (i in 1:n_pops) {
+  for (i in seq_len(n_pops)) {
     for (j in i:n_pops) {
       if (i != j) {
         geo_dist <- if (geo_dims > 0) sqrt(sum((pop_positions[i, 1:geo_dims] - pop_positions[j, 1:geo_dims])^2)) else 0
@@ -253,7 +253,7 @@ transform_to_genetic_distances <- function(
 ) {
   check_distance_matrix(raw_distances, "Raw distances before transformation", verbose)
   genetic_dist <- matrix(0, nrow = n_pops, ncol = n_pops)
-  for (i in 1:n_pops) {
+  for (i in seq_len(n_pops)) {
     for (j in i:n_pops) {
       if (i != j) {
         raw_dist <- raw_distances[i, j]

@@ -18,9 +18,6 @@ Author ORCID: https://orcid.org/0000-0002-9916-9732
 In R:
 
 ```r
-# Optional: install dependencies first
-source("scripts/install_dependencies.R")
-
 # Install from local checkout
 install.packages(".", repos = NULL, type = "source")
 
@@ -45,8 +42,9 @@ res$plots$mds()
 ## Examples
 
 Reproducible analysis pipelines are provided under `inst/examples`:
-- `01_mds_procrustes_sensitivity.R` — MDS + Procrustes sensitivity study
-- `02_besmi_prepare_and_batch.R` — BESMI dataset preparation and batch imputation
+- `00_simulate_structured_gdm.R` — structured simulation + plots
+- `01_mds_procrustes_calibration.R` — MDS + Procrustes calibration
+- `02_besmi_end_to_end.R` — BESMI end-to-end example
 
 To run after installation:
 
