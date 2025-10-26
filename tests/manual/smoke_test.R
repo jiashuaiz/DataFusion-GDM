@@ -1,4 +1,4 @@
-# Local smoke test for DataFusionGDM
+# Local smoke test for DataFusionGDM (manual)
 suppressPackageStartupMessages({
   if (!requireNamespace("devtools", quietly = TRUE)) install.packages("devtools", repos = "https://cloud.r-project.org")
   if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2", repos = "https://cloud.r-project.org")
@@ -46,3 +46,5 @@ imp <- besmi_iterative_imputation(Min, M_mask = mask, M_real = A, max_iterations
 stopifnot(is.matrix(imp$final_matrix))
 
 message("Smoke tests passed.")
+
+

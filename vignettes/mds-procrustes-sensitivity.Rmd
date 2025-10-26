@@ -13,23 +13,14 @@ library(ggplot2)
 library(vegan)
 set.seed(42)
 
-pkg_file <- system.file("extdata", "GDM_simulated.csv", package = "DataFusionGDM")
-if (nzchar(pkg_file)) {
-  input_file <- pkg_file
-} else {
-  if (!file.exists("data/GDM_simulated.csv")) {
-    dir.create("data", showWarnings = FALSE)
-    export_simulated_gdm("data/GDM_simulated.csv", scenario = "default", n_pops = 40)
-  }
-  input_file <- "data/GDM_simulated.csv"
-}
+# Generate a synthetic full matrix in memory (no file I/O)
+full_matrix <- simulate_genetic_distances(n_pops = 40, verbose = FALSE)$distance_matrix
 
 k_values <- c(4, 8, 12)
 num_tests <- 3
 seed_base <- 42
 
-prepare_matrices_from_csv <- function(input_file, k, bias_mu = 0.1, noise_sd = 0.05, randomize_shared = TRUE, seed = 42) {
-  full_matrix <- as.matrix(read.csv(input_file, header = TRUE, row.names = 1))
+prepare_matrices_from_matrix <- function(full_matrix, k, bias_mu = 0.1, noise_sd = 0.05, randomize_shared = TRUE, seed = 42) {
   all_pop_names <- rownames(full_matrix)
   np <- length(all_pop_names)
   stopifnot(k >= 1, k <= np)
@@ -54,7 +45,7 @@ results <- data.frame()
 for (k in k_values) {
   for (test_id in seq_len(num_tests)) {
     test_seed <- seed_base + test_id * 100 + k
-    matrices <- prepare_matrices_from_csv(input_file, k = k, seed = test_seed)
+    matrices <- prepare_matrices_from_matrix(full_matrix, k = k, seed = test_seed)
     A <- matrices$A; B <- matrices$B
     mds <- perform_mds(A, B)
     X <- mds$X; Y <- mds$Y; d_opt <- mds$d_opt
