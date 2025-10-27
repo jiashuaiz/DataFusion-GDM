@@ -15,6 +15,9 @@ renv.lock
 .DS_Store
 Thumbs.db
 
+# Editors
+.vscode/
+
 # Generated artifacts and outputs
 **/data/**
 !inst/extdata/**

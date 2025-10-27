@@ -4,7 +4,7 @@ citHeader("To cite DataFusionGDM in publications, please use:")
 
 paper <- bibentry(
   bibtype = "Article",
-  title   = "Machine learning solutions for integrating partially overlapping genetic datasets and modelling host–endophyte effects in ryegrass (Lolium) dry matter yield estimation",
+  title   = "Machine learning solutions for integrating partially overlapping genetic datasets and modelling hostâ€“endophyte effects in ryegrass (Lolium) dry matter yield estimation",
   author  = c(
     person(given = "Jiashuai", family = "Zhu"),
     person(given = "M. Michelle", family = "Malmberg"),
