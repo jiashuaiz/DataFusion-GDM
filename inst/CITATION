@@ -2,37 +2,34 @@
 
 citHeader("To cite DataFusionGDM in publications, please use:")
 
-paper <- bibentry(
-  bibtype = "Article",
-  title   = "Machine learning solutions for integrating partially overlapping genetic datasets and modelling host–endophyte effects in ryegrass (Lolium) dry matter yield estimation",
-  author  = c(
-    person(given = "Jiashuai", family = "Zhu"),
-    person(given = "M. Michelle", family = "Malmberg"),
-    person(given = "Maiko", family = "Shinozuka"),
-    person(given = "Renata M.", family = "Retegan"),
-    person(given = "Noel O.", family = "Cogan"),
-    person(given = "Joe L.", family = "Jacobs"),
-    person(given = "Khageswor", family = "Giri"),
-    person(given = "Kevin F.", family = "Smith")
+c(
+  bibentry(
+    bibtype = "Article",
+    title   = "Machine learning solutions for integrating partially overlapping genetic datasets and modelling host–endophyte effects in ryegrass (Lolium) dry matter yield estimation",
+    author  = c(
+      person(given = "Jiashuai", family = "Zhu"),
+      person(given = "M. Michelle", family = "Malmberg"),
+      person(given = "Maiko", family = "Shinozuka"),
+      person(given = "Renata M.", family = "Retegan"),
+      person(given = "Noel O.", family = "Cogan"),
+      person(given = "Joe L.", family = "Jacobs"),
+      person(given = "Khageswor", family = "Giri"),
+      person(given = "Kevin F.", family = "Smith")
+    ),
+    year    = "2025",
+    journal = "Frontiers in Plant Science",
+    volume  = "16",
+    doi     = "10.3389/fpls.2025.1543956"
   ),
-  year    = "2025",
-  journal = "Frontiers in Plant Science",
-  volume  = "16",
-  doi     = "10.3389/fpls.2025.1543956",
-  url     = "https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2025.1543956"
+  bibentry(
+    bibtype  = "Misc",
+    title    = "DataFusion-GDM",
+    author   = person(given = "Jiashuai", family = "Zhu"),
+    year     = "2025",
+    howpublished = "Software",
+    organization = "The University of Melbourne",
+    doi      = "10.26188/28602953"
+  )
 )
-
-software <- bibentry(
-  bibtype  = "Misc",
-  title    = "DataFusion-GDM",
-  author   = person(given = "Jiashuai", family = "Zhu"),
-  year     = "2025",
-  howpublished = "Software",
-  organization = "The University of Melbourne",
-  doi      = "10.26188/28602953",
-  url      = "https://doi.org/10.26188/28602953"
-)
-
-c(paper, software)
 
 

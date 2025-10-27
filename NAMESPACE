@@ -1,4 +1,4 @@
-﻿export(perform_mds)
+export(perform_mds)
 export(apply_procrustes)
 export(coords_to_distances)
 
