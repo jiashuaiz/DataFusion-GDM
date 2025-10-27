@@ -18,11 +18,8 @@ Author ORCID: https://orcid.org/0000-0002-9916-9732
 In R:
 
 ```r
-# Install from local checkout
-install.packages(".", repos = NULL, type = "source")
-
-# Or using devtools
-# devtools::install_local(".")
+if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
+remotes::install_github("jiashuaiz/DataFusion-GDM")
 ```
 
 ## Usage
@@ -37,6 +34,15 @@ res$plots$mds()
 
 # Optionally export to CSV if needed
 # export_simulated_gdm("GDM_simulated.csv", scenario = "default", n_pops = 40)
+
+# Simulate and visualize
+source(system.file("examples/simulate_gdm_quick.R", package = "DataFusionGDM"), echo = TRUE)
+
+# MDS + Procrustes
+source(system.file("examples/mds_procrustes_demo.R", package = "DataFusionGDM"), echo = TRUE)
+
+# BESMI batch (small demo)
+source(system.file("examples/besmi_batch_quick.R", package = "DataFusionGDM"), echo = TRUE)
 ```
 
 ## Vignettes
@@ -45,6 +51,13 @@ See the package vignettes for end-to-end guides:
 - Getting started
 - MDS + Procrustes sensitivity
 - BESMI batch imputation
+
+Open vignettes in R:
+
+```r
+browseVignettes("DataFusionGDM")
+vignette("getting-started", package = "DataFusionGDM")
+```
 
 ## Contents
 

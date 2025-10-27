@@ -1,7 +1,7 @@
 Package: DataFusionGDM
 Type: Package
 Title: Machine Learning for Integrating Partially Overlapped Genetic Datasets
-Version: 1.3.0
+Version: 1.3.1
 Authors@R: c(person(given = "Jiashuai", family = "Zhu", role = c("aut", "cre"), email = "jiashuai.zhu@student.unimelb.edu.au", comment = c(ORCID = "0000-0002-9916-9732", affiliation = "Faculty of Science, The University of Melbourne, Parkville, VIC, Australia; Agriculture Victoria, AgriBio Centre, Bundoora, VIC, Australia")), person(given = "The University of Melbourne", role = c("cph")), person(given = "Agriculture Victoria", role = c("cph")))
 Description: Tools to simulate genetic distance matrices, align and compare them via MDS and Procrustes, and evaluate imputation with the BESMI framework.
 License: GPL-3 | file LICENSE
