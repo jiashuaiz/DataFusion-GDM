@@ -1,7 +1,6 @@
 library(DataFusionGDM)
 
-set.seed(233)
-full <- simulate_genetic_distances(n_pops = 40, verbose = FALSE)$distance_matrix
+full <- simulate_genetic_distances(n_pops = 40, verbose = FALSE, seed = 233)$distance_matrix
 
 summary_table <- data.frame()
 for (k in 1:2) {

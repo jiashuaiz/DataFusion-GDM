@@ -11,8 +11,9 @@ besmi_batch_impute(
   imputation_convergence_threshold = 1e-06,
   propagation_convergence_threshold = 1e-06,
   distance_metric = "mae",
-  output_dir = "data/imputation_set",
-  k_filter = NULL
+  output_dir = file.path(tempdir(), "DataFusionGDM_imputation"),
+  k_filter = NULL,
+  full_dataset_path = NULL
 )
 }
 \arguments{
@@ -28,9 +29,11 @@ besmi_batch_impute(
 
 \item{distance_metric}{Distance metric for evaluation ('mae','ssd','rmse','correlation')}
 
-\item{output_dir}{Output directory for imputed matrices}
+\item{output_dir}{Output directory for imputed matrices (defaults to a temporary location)}
 
 \item{k_filter}{Optional numeric filter for k value}
+
+\item{full_dataset_path}{Optional path to a full matrix RDS used as ground truth}
 }
 \value{
 Data frame of metrics for all datasets

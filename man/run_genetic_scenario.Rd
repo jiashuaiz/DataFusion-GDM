@@ -8,6 +8,7 @@ run_genetic_scenario(
   scenario = "default",
   n_pops = 30,
   output_file = NULL,
+  seed = NULL,
   verbose = TRUE
 )
 }
@@ -17,6 +18,8 @@ run_genetic_scenario(
 \item{n_pops}{Number of populations}
 
 \item{output_file}{Optional CSV path to write the distance matrix}
+
+\item{seed}{Optional seed forwarded to run_genetic_simulation()}
 
 \item{verbose}{Print diagnostic information}
 }

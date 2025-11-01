@@ -11,7 +11,8 @@ devtools::load_all(".")
 
 message("Running simulation...")
 res <- simulate_genetic_distances(n_pops = 12, n_major_groups = 3, n_subgroups = 6,
-                                  geo_dims = 2, genetic_dims = 2, use_noise = FALSE, verbose = FALSE)
+                                  geo_dims = 2, genetic_dims = 2, use_noise = FALSE,
+                                  verbose = FALSE, seed = 202)
 stopifnot(is.matrix(res$distance_matrix), nrow(res$distance_matrix) == 12)
 
 message("Testing plot creation...")
@@ -20,8 +21,8 @@ invisible(ggplot2::ggplot_build(p))
 
 message("Testing MDS + Procrustes...")
 A <- res$distance_matrix
-set.seed(123)
-B <- A + matrix(rnorm(length(A), 0, 0.01), nrow = nrow(A))
+noise <- matrix(sin(seq_len(length(A))) * 0.01, nrow = nrow(A))
+B <- A + noise
 diag(B) <- 0
 B <- (B + t(B)) / 2
 mds <- perform_mds(A, B)
@@ -36,9 +37,8 @@ post <- mean((A - Bcal)^2)
 message(sprintf("MDS/Procrustes improvement: %.4f -> %.4f", prior, post))
 
 message("Testing BESMI iterative imputation...")
-set.seed(1)
 mask <- matrix(FALSE, nrow = nrow(A), ncol = ncol(A))
-idx <- sample(seq_len(nrow(A)), 3)
+idx <- seq_len(min(3, nrow(A)))
 mask[idx, idx] <- TRUE
 Min <- A
 Min[mask] <- NA

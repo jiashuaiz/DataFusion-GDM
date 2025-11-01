@@ -34,7 +34,27 @@ besmi_prepare_full_dataset <- function(input_path) {
 #' @return List with masked_matrix, mask_position, group_u, group_s, masked_percentage
 #' @export
 besmi_create_masked_matrices <- function(full_matrix, k, seed = NULL) {
-  if (!is.null(seed)) set.seed(seed)
+  if (!is.null(seed)) {
+    if (!is.numeric(seed) || length(seed) != 1 || !is.finite(seed)) {
+      stop("`seed` must be a single finite numeric value or NULL.")
+    }
+    seed_backup_exists <- exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+    old_seed <- if (seed_backup_exists) get(".Random.seed", envir = .GlobalEnv, inherits = FALSE) else NULL
+    on.exit({
+      if (seed_backup_exists) {
+        if (is.null(old_seed)) {
+          if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+            rm(".Random.seed", envir = .GlobalEnv)
+          }
+        } else {
+          assign(".Random.seed", old_seed, envir = .GlobalEnv)
+        }
+      } else if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+        rm(".Random.seed", envir = .GlobalEnv)
+      }
+    }, add = TRUE)
+    set.seed(as.integer(seed))
+  }
   pop_names <- rownames(full_matrix)
   n_pops <- length(pop_names)
   group_u_indices <- sample(seq_len(n_pops), k)

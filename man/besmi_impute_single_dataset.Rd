@@ -11,7 +11,8 @@ besmi_impute_single_dataset(
   imputation_convergence_threshold = 0.001,
   propagation_convergence_threshold = 0.001,
   distance_metric = "mae",
-  output_dir = "data/imputation_set"
+  output_dir = file.path(tempdir(), "DataFusionGDM_imputation"),
+  full_dataset_path = NULL
 )
 }
 \arguments{
@@ -27,7 +28,9 @@ besmi_impute_single_dataset(
 
 \item{distance_metric}{Distance metric name}
 
-\item{output_dir}{Output directory for results}
+\item{output_dir}{Output directory for results (defaults to a temporary location)}
+
+\item{full_dataset_path}{Optional path to a full matrix RDS used as ground truth}
 }
 \value{
 Data frame of per-iteration metrics

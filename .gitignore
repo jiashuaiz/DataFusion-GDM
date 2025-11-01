@@ -23,6 +23,7 @@ Thumbs.db
 !inst/extdata/**
 !01-MDS_Procrustes/GDM_simulated.csv
 !02-BESMI/data/GDM_simulated.csv
+artifacts/
 **/figures/**
 **/plots/**
 **/outputs/**

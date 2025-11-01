@@ -11,10 +11,9 @@ vignette: >
 library(DataFusionGDM)
 library(ggplot2)
 library(vegan)
-set.seed(42)
 
 # Generate a synthetic full matrix in memory (no file I/O)
-full_matrix <- simulate_genetic_distances(n_pops = 40, verbose = FALSE)$distance_matrix
+full_matrix <- simulate_genetic_distances(n_pops = 40, verbose = FALSE, seed = 42)$distance_matrix
 
 k_values <- c(4, 8, 12)
 num_tests <- 3
@@ -24,12 +23,17 @@ prepare_matrices_from_matrix <- function(full_matrix, k, bias_mu = 0.1, noise_sd
   all_pop_names <- rownames(full_matrix)
   np <- length(all_pop_names)
   stopifnot(k >= 1, k <= np)
-  set.seed(seed)
-  shared_pop_names <- if (randomize_shared) sample(all_pop_names, k) else all_pop_names[1:k]
+  if (randomize_shared) {
+    ordering <- order(sin(seq_len(np) + seed), decreasing = TRUE)
+    shared_pop_names <- all_pop_names[ordering[seq_len(k)]]
+  } else {
+    shared_pop_names <- all_pop_names[seq_len(k)]
+  }
   unique_pop_names <- setdiff(all_pop_names, shared_pop_names)
   A <- full_matrix; B <- full_matrix
-  A <- abs(A + matrix(rnorm(length(A), 0, noise_sd), nrow(A)))
-  B <- abs(B + matrix(rnorm(length(B), bias_mu, noise_sd), nrow(B)))
+  base_index <- seq_len(length(A)) + seed
+  A <- abs(A + matrix(sin(base_index) * noise_sd, nrow(A)))
+  B <- abs(B + matrix(cos(base_index) * noise_sd + bias_mu, nrow(B)))
   diag(A) <- 0; diag(B) <- 0
   label_A <- label_B <- rep("", np); names(label_A) <- names(label_B) <- all_pop_names
   label_A[shared_pop_names] <- paste0("S_", shared_pop_names)

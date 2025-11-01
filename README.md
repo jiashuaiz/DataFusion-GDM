@@ -32,8 +32,9 @@ res <- run_genetic_scenario("island", n_pops = 40)
 res$plots$heatmap()
 res$plots$mds()
 
-# Optionally export to CSV if needed
-# export_simulated_gdm("GDM_simulated.csv", scenario = "default", n_pops = 40)
+# Optionally export to CSV if needed (defaults to tempdir)
+tmp <- export_simulated_gdm(scenario = "default", n_pops = 40, verbose = FALSE)
+# unlink(tmp)  # clean up when finished
 
 # Simulate and visualize
 source(system.file("examples/simulate_gdm_quick.R", package = "DataFusionGDM"), echo = TRUE)

@@ -5,20 +5,23 @@
 \title{Export a simulated GDM to CSV}
 \usage{
 export_simulated_gdm(
-  output_file = "GDM_simulated.csv",
+  output_file = tempfile("gdm_", fileext = ".csv"),
   scenario = "default",
   n_pops = 30,
-  verbose = TRUE
+  verbose = TRUE,
+  seed = NULL
 )
 }
 \arguments{
-\item{output_file}{Output CSV filename}
+\item{output_file}{Output CSV filename (defaults to a session-scoped temporary path)}
 
 \item{scenario}{Scenario name}
 
 \item{n_pops}{Number of populations}
 
 \item{verbose}{Verbose output}
+
+\item{seed}{Optional seed forwarded to run_genetic_scenario()}
 }
 \value{
 Invisibly, the normalized path to the written CSV
@@ -27,5 +30,6 @@ Invisibly, the normalized path to the written CSV
 Export a simulated GDM to CSV
 }
 \examples{
-# export_simulated_gdm("GDM_simulated.csv")
+tmp <- export_simulated_gdm(verbose = FALSE)
+if (file.exists(tmp)) unlink(tmp)
 }
