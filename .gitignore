@@ -18,11 +18,15 @@ Thumbs.db
 # Editors
 .vscode/
 
-# Generated artifacts and outputs
+# Development files (not for end users)
+dev/
+tests/manual/
+artifacts/
+depl/
+
+# Generated outputs
 **/data/**
 !inst/extdata/**
-!01-MDS_Procrustes/GDM_simulated.csv
-!02-BESMI/data/GDM_simulated.csv
 **/figures/**
 **/plots/**
 **/outputs/**
@@ -35,9 +39,8 @@ Thumbs.db
 *.RDS
 *.RData
 
-# CSVs (except docs)
+# CSVs (except package data)
 *.csv
-!README.csv
 !inst/extdata/*.csv
 
 # Images

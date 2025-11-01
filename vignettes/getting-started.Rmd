@@ -35,7 +35,7 @@ remotes::install_github("jiashuaiz/DataFusion-GDM")
 
 ```{r}
 library(DataFusionGDM)
-res <- run_genetic_scenario("default", n_pops = 30)
+res <- run_genetic_scenario("default", n_pops = 30, seed = 2025)
 # Display MDS plot (heatmap requires ComplexHeatmap, not shown here)
 res$plots$mds()
 ```
@@ -59,9 +59,8 @@ mean((A - B_cal)^2)
 
 ```{r}
 # Prepare a masked dataset in-memory
-set.seed(1)
 mask <- matrix(FALSE, nrow = nrow(G), ncol = ncol(G))
-sel <- sample(seq_len(nrow(G)), 5)
+sel <- seq_len(min(5, nrow(G)))
 mask[sel, sel] <- TRUE
 M_input <- G; M_input[mask] <- NA
 

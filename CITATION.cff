@@ -2,8 +2,8 @@ cff-version: 1.1.0
 title: DataFusion-GDM
 message: "If you use this software, please cite the software and, where relevant, the paper."
 type: software
-version: 1.3.1
-date-released: 2025-10-26
+version: 1.3.2
+date-released: 2025-11-01
 abstract: Machine Learning solutions for integrating partially overlapped genetic datasets, including simulation, MDS/Procrustes alignment, and BESMI imputation utilities.
 authors:
   - given-names: Jiashuai
@@ -56,6 +56,6 @@ references:
         family-names: Zhu
         orcid: https://orcid.org/0000-0002-9916-9732
     year: 2025
-    version: 1.3.1
+  version: 1.3.2
     doi: 10.26188/28602953
 

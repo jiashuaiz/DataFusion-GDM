@@ -7,8 +7,9 @@
 #' @param imputation_convergence_threshold Convergence threshold for imputation metric
 #' @param propagation_convergence_threshold Convergence threshold for propagation metric
 #' @param distance_metric Distance metric for evaluation ('mae','ssd','rmse','correlation')
-#' @param output_dir Output directory for imputed matrices
+#' @param output_dir Output directory for imputed matrices (defaults to a temporary location)
 #' @param k_filter Optional numeric filter for k value
+#' @param full_dataset_path Optional path to a full matrix RDS used as ground truth
 #' @return Data frame of metrics for all datasets
 #' @export
 besmi_batch_impute <- function(dataset_paths,
@@ -17,8 +18,9 @@ besmi_batch_impute <- function(dataset_paths,
                                imputation_convergence_threshold = 1e-6,
                                propagation_convergence_threshold = 1e-6,
                                distance_metric = "mae",
-                               output_dir = "data/imputation_set",
-                               k_filter = NULL) {
+                               output_dir = file.path(tempdir(), "DataFusionGDM_imputation"),
+                               k_filter = NULL,
+                               full_dataset_path = NULL) {
   combined_metrics <- data.frame()
   if (length(dataset_paths) == 0) return(combined_metrics)
   if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
@@ -30,7 +32,8 @@ besmi_batch_impute <- function(dataset_paths,
       besmi_impute_single_dataset(dataset_path, method = the_method, max_iterations = max_iter,
                                   imputation_convergence_threshold = imputation_convergence_threshold,
                                   propagation_convergence_threshold = propagation_convergence_threshold,
-                                  distance_metric = distance_metric, output_dir = output_dir)
+                                  distance_metric = distance_metric, output_dir = output_dir,
+                                  full_dataset_path = full_dataset_path)
     }, error = function(e) {
       data.frame(k = k, bs = bs_i, iteration = NA, imputation_dis = NA, propagation_dis = NA,
                  runtime = NA, improvement_pct = NA, converged = FALSE, averaged = NA,
@@ -53,7 +56,8 @@ besmi_batch_impute <- function(dataset_paths,
 #' @param imputation_convergence_threshold Convergence threshold for imputation metric
 #' @param propagation_convergence_threshold Convergence threshold for propagation metric
 #' @param distance_metric Distance metric name
-#' @param output_dir Output directory for results
+#' @param output_dir Output directory for results (defaults to a temporary location)
+#' @param full_dataset_path Optional path to a full matrix RDS used as ground truth
 #' @return Data frame of per-iteration metrics
 #' @export
 besmi_impute_single_dataset <- function(input_path, method = "lasso.norm", 
@@ -61,7 +65,8 @@ besmi_impute_single_dataset <- function(input_path, method = "lasso.norm",
                                   imputation_convergence_threshold = 1e-3,
                                   propagation_convergence_threshold = 1e-3,
                                   distance_metric = "mae",
-                                  output_dir = "data/imputation_set") {
+                                  output_dir = file.path(tempdir(), "DataFusionGDM_imputation"),
+                                  full_dataset_path = NULL) {
   k <- as.numeric(gsub(".*masked_k([0-9]+)_bs.*", "\\1", input_path))
   bs_i <- as.numeric(gsub(".*masked_k[0-9]+_bs([0-9]+)\\.rds", "\\1", input_path))
   if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
@@ -84,8 +89,10 @@ besmi_impute_single_dataset <- function(input_path, method = "lasso.norm",
   masked_percent <- 100 * masked_cells / (nrow(M_input) * ncol(M_input))
   empty_metrics$masked_cells <- masked_cells
   empty_metrics$masked_percent <- masked_percent
-  full_dataset_path <- "data/full_dataset.rds"
-  M_real <- tryCatch({ if (file.exists(full_dataset_path)) readRDS(full_dataset_path) else NULL }, error = function(e) NULL)
+  M_real <- NULL
+  if (!is.null(full_dataset_path)) {
+    M_real <- tryCatch({ if (file.exists(full_dataset_path)) readRDS(full_dataset_path) else NULL }, error = function(e) NULL)
+  }
   imputation_result <- tryCatch({
     if (toupper(method) == "KNN") {
       besmi_knn_impute(M_input = M_input, M_mask = M_mask, M_real = M_real, distance_metric = distance_metric, k = k, bs_i = bs_i)

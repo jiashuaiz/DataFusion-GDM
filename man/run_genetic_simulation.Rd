@@ -24,6 +24,7 @@ run_genetic_simulation(
   use_isolation_by_distance = NULL,
   use_nonlinear = TRUE,
   use_noise = TRUE,
+  seed = NULL,
   output_file = NULL,
   verbose = TRUE
 )
@@ -66,6 +67,8 @@ run_genetic_simulation(
 \item{use_nonlinear}{Whether to apply nonlinear transformation}
 
 \item{use_noise}{Whether to add noise}
+
+\item{seed}{Optional seed forwarded to simulate_genetic_distances()}
 
 \item{output_file}{Optional CSV file path to write the distance matrix}
 

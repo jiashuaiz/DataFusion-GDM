@@ -25,6 +25,7 @@ simulate_genetic_distances(
   use_isolation_by_distance = TRUE,
   use_nonlinear = TRUE,
   use_noise = TRUE,
+  seed = NULL,
   verbose = TRUE
 )
 }
@@ -68,6 +69,8 @@ simulate_genetic_distances(
 \item{use_nonlinear}{Whether to apply nonlinear transformation}
 
 \item{use_noise}{Whether to add noise}
+
+\item{seed}{Optional seed for reproducibility (NULL leaves the RNG state unchanged)}
 
 \item{verbose}{Print diagnostics}
 }

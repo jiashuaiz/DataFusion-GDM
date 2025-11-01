@@ -350,6 +350,7 @@ create_mds_plot <- function(dist_matrix, pop_info) {
 #' @param use_isolation_by_distance Whether to weight geographic distance
 #' @param use_nonlinear Whether to apply nonlinear transformation
 #' @param use_noise Whether to add noise
+#' @param seed Optional seed for reproducibility (NULL leaves the RNG state unchanged)
 #' @param verbose Print diagnostics
 #' @return A list with `distance_matrix`, `population_info`, `position_matrix`, and `parameters`.
 #' @export
@@ -373,10 +374,31 @@ simulate_genetic_distances <- function(
     use_bottlenecks = TRUE,
     use_isolation_by_distance = TRUE,
     use_nonlinear = TRUE,
-    use_noise = TRUE,
+  use_noise = TRUE,
+  seed = NULL,
     verbose = TRUE
 ) {
-  set.seed(233)
+  if (!is.null(seed)) {
+    if (!is.numeric(seed) || length(seed) != 1 || !is.finite(seed)) {
+      stop("`seed` must be a single finite numeric value or NULL.")
+    }
+    seed_backup_exists <- exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+    old_seed <- if (seed_backup_exists) get(".Random.seed", envir = .GlobalEnv, inherits = FALSE) else NULL
+    on.exit({
+      if (seed_backup_exists) {
+        if (is.null(old_seed)) {
+          if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+            rm(".Random.seed", envir = .GlobalEnv)
+          }
+        } else {
+          assign(".Random.seed", old_seed, envir = .GlobalEnv)
+        }
+      } else if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) {
+        rm(".Random.seed", envir = .GlobalEnv)
+      }
+    }, add = TRUE)
+    set.seed(as.integer(seed))
+  }
   n_pops <- max(10, n_pops)
   n_major_groups <- min(n_pops/2, max(2, n_major_groups))
   n_subgroups <- min(n_pops, max(n_major_groups, n_subgroups))
@@ -419,7 +441,8 @@ simulate_genetic_distances <- function(
       use_bottlenecks = use_bottlenecks,
       use_isolation_by_distance = use_isolation_by_distance,
       use_nonlinear = use_nonlinear,
-      use_noise = use_noise
+      use_noise = use_noise,
+      seed = seed
     )
   )
 }
@@ -449,6 +472,7 @@ visualize_results <- function(sim_results) {
 #' @param genetic_dims Genetic dimensions (overrides default based on model if set)
 #' @param subgroup_separation Separation between subgroups (default: group_separation/3 when NULL)
 #' @param output_file Optional CSV file path to write the distance matrix
+#' @param seed Optional seed forwarded to simulate_genetic_distances()
 #' @return List with `results` and `plots` (functions to print plots)
 #' @export
 run_genetic_simulation <- function(
@@ -471,6 +495,7 @@ run_genetic_simulation <- function(
   use_isolation_by_distance = NULL,
   use_nonlinear = TRUE,
   use_noise = TRUE,
+  seed = NULL,
   output_file = NULL,
   verbose = TRUE
 ) {
@@ -526,6 +551,7 @@ run_genetic_simulation <- function(
     use_isolation_by_distance = use_isolation_by_distance,
     use_nonlinear = use_nonlinear,
     use_noise = use_noise,
+    seed = seed,
     verbose = verbose
   )
   plots <- visualize_results(sim_results)
@@ -540,6 +566,7 @@ run_genetic_simulation <- function(
 #' @param scenario Scenario name: 'default', 'island', 'stepping_stone', 'admixture', 'ancient_divergence', 'simple'
 #' @param n_pops Number of populations
 #' @param output_file Optional CSV path to write the distance matrix
+#' @param seed Optional seed forwarded to run_genetic_simulation()
 #' @param verbose Print diagnostic information
 #' @return Same structure as run_genetic_simulation()
 #' @export
@@ -547,6 +574,7 @@ run_genetic_scenario <- function(
     scenario = "default",
     n_pops = 30,
     output_file = NULL,
+    seed = NULL,
     verbose = TRUE
 ) {
   scenarios <- list(
@@ -586,25 +614,36 @@ run_genetic_scenario <- function(
   if (!is.null(output_file)) {
     output_file <- paste0(output_file, "_", scenario)
   }
-  do.call(run_genetic_simulation, c(list(n_pops = n_pops, output_file = output_file, verbose = verbose), params))
+  do.call(run_genetic_simulation, c(list(n_pops = n_pops, output_file = output_file, seed = seed, verbose = verbose), params))
 }
 
 #' Export a simulated GDM to CSV
-#' @param output_file Output CSV filename
+#' @param output_file Output CSV filename (defaults to a session-scoped temporary path)
 #' @param scenario Scenario name
 #' @param n_pops Number of populations
 #' @param verbose Verbose output
+#' @param seed Optional seed forwarded to run_genetic_scenario()
 #' @return Invisibly, the normalized path to the written CSV
 #' @export
 #' @examples
-#' # export_simulated_gdm("GDM_simulated.csv")
-export_simulated_gdm <- function(output_file = "GDM_simulated.csv", scenario = "default", n_pops = 30, verbose = TRUE) {
-  # Ensure directory exists
-  dir.create(dirname(output_file), recursive = TRUE, showWarnings = FALSE)
+#' tmp <- export_simulated_gdm(verbose = FALSE)
+#' if (file.exists(tmp)) unlink(tmp)
+export_simulated_gdm <- function(output_file = tempfile("gdm_", fileext = ".csv"),
+                                 scenario = "default",
+                                 n_pops = 30,
+                                 verbose = TRUE,
+                                 seed = NULL) {
+  if (is.null(output_file) || !nzchar(output_file)) {
+    stop("`output_file` must be a non-empty string path.")
+  }
+  target_dir <- dirname(output_file)
+  if (!dir.exists(target_dir)) {
+    dir.create(target_dir, recursive = TRUE, showWarnings = FALSE)
+  }
   # Normalize without extension for internal write (run_genetic_scenario appends _scenario)
   base_no_ext <- sub("\\.csv$", "", output_file)
   # Run and write
-  invisible(run_genetic_scenario(scenario = scenario, n_pops = n_pops, output_file = base_no_ext, verbose = verbose))
+  invisible(run_genetic_scenario(scenario = scenario, n_pops = n_pops, output_file = base_no_ext, seed = seed, verbose = verbose))
   # Compute actual output path used by run_genetic_simulation
   actual <- paste0(base_no_ext, "_", scenario, ".csv")
   # Return normalized existing path if possible

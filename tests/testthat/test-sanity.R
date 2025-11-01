@@ -4,18 +4,20 @@ test_that("package loads", {
 
 test_that("simulate_genetic_distances returns consistent structure", {
   res <- simulate_genetic_distances(n_pops = 12, n_major_groups = 3, n_subgroups = 6,
-                                    geo_dims = 2, genetic_dims = 2, use_noise = FALSE, verbose = FALSE)
+                                    geo_dims = 2, genetic_dims = 2, use_noise = FALSE,
+                                    verbose = FALSE, seed = 11)
   expect_true(is.matrix(res$distance_matrix))
   expect_equal(nrow(res$distance_matrix), 12)
   expect_equal(ncol(res$distance_matrix), 12)
 })
 
 test_that("MDS + Procrustes runs on small matrices", {
-  set.seed(1)
   res <- simulate_genetic_distances(n_pops = 10, n_major_groups = 3, n_subgroups = 6,
-                                    geo_dims = 2, genetic_dims = 2, use_noise = FALSE, verbose = FALSE)
+                                    geo_dims = 2, genetic_dims = 2, use_noise = FALSE,
+                                    verbose = FALSE, seed = 21)
   A <- res$distance_matrix
-  B <- (A + matrix(rnorm(length(A), 0, 0.01), nrow(A)))
+  noise <- matrix(sin(seq_len(length(A))) * 0.01, nrow(A))
+  B <- (A + noise)
   diag(B) <- 0
   B <- (B + t(B)) / 2
   mds <- perform_mds(A, B)
@@ -30,12 +32,12 @@ test_that("MDS + Procrustes runs on small matrices", {
 })
 
 test_that("BESMI iterative imputation runs with tiny settings", {
-  set.seed(2)
   res <- simulate_genetic_distances(n_pops = 10, n_major_groups = 3, n_subgroups = 6,
-                                    geo_dims = 2, genetic_dims = 2, use_noise = FALSE, verbose = FALSE)
+                                    geo_dims = 2, genetic_dims = 2, use_noise = FALSE,
+                                    verbose = FALSE, seed = 31)
   A <- res$distance_matrix
   mask <- matrix(FALSE, nrow = nrow(A), ncol = ncol(A))
-  idx <- sample(seq_len(nrow(A)), 2)
+  idx <- seq_len(min(2, nrow(A)))
   mask[idx, idx] <- TRUE
   Min <- A
   Min[mask] <- NA
