@@ -52,3 +52,48 @@ depl/
 # Temp
 *.bak
 *.tmp
+
+# Global git hygiene (_spec/GIT_HANDLING.md)
+# Generated outputs / caches
+/dist/
+/build/
+/out/
+/coverage/
+/.cache/
+/tmp/
+/temp/
+*.log
+
+# Downloaded / fetched datasets
+/data/raw/
+/data/downloads/
+/datasets/
+/downloads/
+
+# Binaries / archives
+*.zip
+*.tar
+*.gz
+*.7z
+*.rar
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.mp4
+*.mp3
+
+# Vendor dependencies
+/node_modules/
+
+# Local env / editor artifacts
+/.venv/
+/venv/
+.env
+.env.*
+__pycache__/
+*.py[cod]
+.idea/
+.vscode/
